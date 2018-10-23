@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
-import { View, TextInput, Text } from 'react-native';
+import { View, StyleSheet, } from 'react-native';
+import { Spinner, Container, Header, Content, Item, Input } from 'native-base'
+import MathJax from 'react-native-mathjax';
 
 export class Top extends Component {
   constructor(props) {
@@ -32,18 +34,25 @@ export class Top extends Component {
   }
 
   render() {
-    let preloader = <TextInput style={{height: 40, width: 80, borderColor: 'gray', borderWidth: 1}}
+    let preloader = <Item rounded><Input autoFocus placeholder='部屋番号を入力してください。'
                                onChangeText={this.change}
                                value={this.state.text}
                                keyboardType="numeric"
-    />;
+    /></Item>;
     if (this.state.isShow){
-      preloader = <Text>読み込み中...</Text>
+      preloader = <Spinner color='blue'/>
     }
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style= {{justifyContent: 'center', alignItems: 'center', paddingTop: 80, paddingHorizontal: 60}}>
         {preloader}
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 0
+  },
+});
