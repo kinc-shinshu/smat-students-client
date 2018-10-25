@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Content, List, ListItem, Text, Left, Right, Icon} from 'native-base';
+import { Container, Content, Card, Body, CardItem, Text, Left, Right, Icon} from 'native-base';
 import MathJax from 'react-native-mathjax';
 
 export class Apple extends Component {
@@ -31,8 +31,7 @@ export class Apple extends Component {
   render() {
     const questions = this.props.navigation.state.params.questions;
     const question = questions[this.props.navigation.state.params.questionId];
-    const nextQuestion = [questions[this.props.navigation.state.params.questionId + 1]];
-    const items = (
+    const item = (
       <MathJax
         // HTML content with MathJax support
         html={'$' + this.parse(question.text) + '$'}
@@ -55,7 +54,9 @@ export class Apple extends Component {
     return (
       <Container>
         <Content>
-          {items}
+          <Card>
+            {item}
+          </Card>
         </Content>
       </Container>
     );
