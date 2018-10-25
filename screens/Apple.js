@@ -51,10 +51,16 @@ export class Apple extends Component {
           }
         }
         selection.push(ans);
+        
       }
       selections.push(selection);
     }
     return selections;
+  }
+
+  getAnswer = (text) => {
+    const answers = text.match(/[0-9a-w]+/g);
+    return answers;
   }
 
   render() {
@@ -101,7 +107,9 @@ export class Apple extends Component {
       />
     );
     const selection = this.getSelection(question.answer);
+    const answers = this.getAnswer(question.answer);
     console.log(selection);
+    console.log(answers);
     return (
       <Container>
         <Content>
