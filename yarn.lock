@@ -4404,6 +4404,11 @@ react-native-maps@0.21.0:
     babel-plugin-module-resolver "^2.3.0"
     babel-preset-react-native "1.9.0"
 
+react-native-mathjax@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-mathjax/-/react-native-mathjax-2.0.0.tgz#dfa7c37622f28ab5b384cc0c2880e37790d7af78"
+  integrity sha512-uyOX/sIiApVB28KlEk9A4g78eEu2pMcsNsGVp3JzCJnQsB3Twn8Ok292hvUNATger4hs11zXo+yRC8uhgRVqjw==
+
 react-native-reanimated@1.0.0-alpha.6:
   version "1.0.0-alpha.6"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.0.0-alpha.6.tgz#169d23b3b39d1c88e509ddc97027b1c8cc066da8"
