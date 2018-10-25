@@ -22,6 +22,7 @@
     "arrow-body-style": "warn",
     "comma-dangle": "warn",
     "no-plusplus": ["warn", { "allowForLoopAfterthoughts": true }],
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "import/prefer-default-export": "off"
   }
 }
