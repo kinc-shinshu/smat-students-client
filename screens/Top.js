@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
 import { View, StyleSheet, } from 'react-native';
 import { Spinner, Container, Header, Content, Item, Input } from 'native-base'
-import MathJax from 'react-native-mathjax';
 
 export class Top extends Component {
   constructor(props) {
