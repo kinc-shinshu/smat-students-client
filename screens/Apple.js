@@ -1,8 +1,38 @@
 import React, { Component } from 'react';
-import { Container, Content, Card, Body, CardItem, Text, Left, Right, Icon} from 'native-base';
+import {
+  Container,
+  Content,
+  Card,
+  Body,
+  CardItem,
+  Text,
+  Left,
+  Right,
+  Icon,
+  Button,
+  Toast,
+  Item,
+  Input, Spinner
+} from 'native-base';
 import MathJax from 'react-native-mathjax';
+import { Col, Row, Grid } from 'react-native-easy-grid';
+import {View} from "react-native";
 
 export class Apple extends Component {
+  static navigationOptions = {
+    title: '問題Yeah',
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isShow: false,
+      backColor: 'white',
+      answerNumber: 0,
+      isInCo: true,
+    };
+  }
+
   parse = (text) => {
     let result = text.replace(/\*/g, "\\times");
     result = result.replace(/\//g, "\\div");
@@ -25,7 +55,7 @@ export class Apple extends Component {
     }
     result = result.replace(/@|#|\$|%|&/, "");
     console.log(result);
-    return result
+    return result;
   }
 
   ansify = (text) => {
@@ -36,41 +66,54 @@ export class Apple extends Component {
   getSelection = (text) => {
     const answers = text.match(/[0-9a-w]+/g);
     const selections = [];
-    for (let a of answers){
+    for (let a of answers) {
       let selection = [a];
-      for (let i = 0; i < 3; i++){
+      for (let i = 0; i < 3; i++) {
         let ans = "";
         const c = "abcdefghijklmnopqrstuvw";
-        for (let i = 0; i < a.length; i++){
-          if (isNaN(parseInt(a[i]))){
+        for (let i = 0; i < a.length; i++) {
+          if (isNaN(parseInt(a[i]))) {
             // str const
-            ans += c[Math.floor(Math.random()*c.length)]
+            ans += c[Math.floor(Math.random() * c.length)]
           } else {
             // int const
-            ans += Math.floor(Math.random()*10);
+            ans += Math.floor(Math.random() * 10);
           }
         }
         selection.push(ans);
-        
       }
       selections.push(selection);
     }
     return selections;
-  }
+  };
 
   getAnswer = (text) => {
-    const answers = text.match(/[0-9a-w]+/g);
-    return answers;
+    const answersDict = text.match(/[0-9a-w]+/g);
+    return answersDict;
+  }
+
+  makeFontBigger = (text) => {
+    let result = "\\Large{" + text + "}";
+    return result;
+  }
+
+  inCo = (answer, choice) => {
+    if (this.state.isInCo === true && answer === choice) {
+      this.setState({backColor: 'green', isShow: true, answerNumber:  this.state.answerNumber + 1});
+    }else if (this.state.isInCo === true && answer !== choice){
+      this.setState({backColor: 'red', isShow: true, isInCo: false, answerNumber:  this.state.answerNumber + 1});
+    }else{
+      this.setState({answerNumber:  this.state.answerNumber + 1});
+    }
   }
 
   render() {
     const questions = this.props.navigation.state.params.questions;
-    const question = questions[this.props.navigation.state.params.questionId];
+    const questionId = this.props.navigation.state.params.questionId;
+    const question = questions[questionId];
     const item = (
       <MathJax
-        // HTML content with MathJax support
-        html={'$' + this.parse(question.text) + '$'}
-        // MathJax config option
+        html={'$'+ this.makeFontBigger(this.parse(question.text)) + '$'}
         mathJaxOptions={{
           messageStyle: 'none',
           extensions: [ 'tex2jax.js' ],
@@ -86,11 +129,26 @@ export class Apple extends Component {
         }}
       />
     );
+
+    const dictOfAnswer = this.getAnswer(question.answer);
+    const dictOfChoice = this.getSelection(question.answer);
+
+    let dictOfAnswerForUse = dictOfAnswer;
+    let dictOfChoiceForUse = dictOfChoice;
+
+    if (this.state.answerNumber < (dictOfAnswer.length)) {
+      dictOfAnswerForUse = dictOfAnswer[this.state.answerNumber];
+      dictOfChoiceForUse = dictOfChoice[this.state.answerNumber];
+    }else if (this.state.answerNumber === (dictOfAnswer.length)) {
+      {this.props.navigation.push('Details', {questions: questions, questionId:questionId})};
+      dictOfAnswerForUse = "";
+      dictOfChoiceForUse = "";
+    }
+
+
     const answer = (
       <MathJax
-        // HTML content with MathJax support
-        html={'$' + this.parse(this.ansify(question.answer)) + '$'}
-        // MathJax config option
+        html={'$' + this.makeFontBigger(this.parse(this.ansify(question.answer))) + '$'}
         mathJaxOptions={{
           messageStyle: 'none',
           extensions: [ 'tex2jax.js' ],
@@ -106,23 +164,27 @@ export class Apple extends Component {
         }}
       />
     );
-    const selection = this.getSelection(question.answer);
-    const answers = this.getAnswer(question.answer);
-    console.log(selection);
-    console.log(answers);
+
     return (
       <Container>
-        <Content>
+        <Content style={{backgroundColor: this.state.backColor}}>
           <Text>問題</Text>
-          <Card>
+          <Card style={{paddingLeft: 30, paddingTop: 30, paddingBottom: 30}}>
             {item}
           </Card>
           <Text>解答</Text>
-          <Card>
+          <Card style={{paddingLeft: 30, paddingTop: 30, paddingBottom: 30}}>
             {answer}
           </Card>
+          <Grid style={{paddingTop: 100, height: 100}}>
+            <Col style={{paddingLeft: 30}}><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2])}}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3])}}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+          </Grid>
         </Content>
       </Container>
     );
   }
 }
+
