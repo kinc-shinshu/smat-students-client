@@ -13,7 +13,7 @@ export class Qlist extends Component {
     const items = questions.map((c, i) => (
         <ListItem key={i} questionId={c.id} onPress={() => { this.props.navigation.navigate('Details', { questions, questionId: i }); }}>
           <Left>
-            <Text>{c.text}</Text>
+            <Text>問題{i + 1}</Text>
           </Left>
           <Right>
             <Icon name="arrow-forward" />

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { createStackNavigator } from 'react-navigation';
 import { Top } from './screens/Top';
-import { Qlist } from './screens/Qlist'
-import { Apple } from './screens/Apple'
+import { Qlist } from './screens/Qlist';
+import { Apple } from './screens/Apple';
 
 const RootStack = createStackNavigator(
   {
