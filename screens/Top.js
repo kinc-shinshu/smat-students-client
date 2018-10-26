@@ -8,9 +8,6 @@ import {
 } from 'native-base';
 
 export class Top extends Component {
-  static navigationOptions = {
-    title: '入室せよ',
-  };
 
   constructor(props) {
     super(props);

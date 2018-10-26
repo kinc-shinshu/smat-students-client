@@ -4,9 +4,6 @@ import {
 } from 'native-base';
 
 export class Qlist extends Component {
-  static navigationOptions = {
-    title: '問題一覧',
-  };
 
   render() {
     const questions = this.props.navigation.state.params.questions;

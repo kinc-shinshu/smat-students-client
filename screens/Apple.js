@@ -3,26 +3,15 @@ import {
   Container,
   Content,
   Card,
-  Body,
-  CardItem,
-  Text,
-  Left,
-  Right,
   Icon,
+  Text,
   Button,
-  Toast,
-  Item,
-  Input, Spinner,
 } from 'native-base';
 import MathJax from 'react-native-mathjax';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import { View } from 'react-native';
+import { Col, Grid } from 'react-native-easy-grid';
+import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
 export class Apple extends Component {
-  static navigationOptions = {
-    title: '問題Yeah',
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -33,7 +22,20 @@ export class Apple extends Component {
     };
   }
 
-  parse(text) {
+  static navigationOptions = ({ navigation }) => ({
+    title: `問題${(navigation.state.params.questionId + 1).toString()}`,
+    headerRight: (
+        <HeaderButtons HeaderButtonComponent={passMeFurther => (
+          <HeaderButton {...passMeFurther} iconSize={23} color="#000"/>
+        )}>
+          <Item title="問題一覧" onPress={() => {
+            navigation.navigate('BigList');
+          }}/>
+        </HeaderButtons>
+    ),
+  });
+
+  parse = (text) => {
     let result = text.replace(/\*/g, '\\times');
     result = result.replace(/\//g, '\\div');
     result = result.replace(/\+-/g, '\\pm');
