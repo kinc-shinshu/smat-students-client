@@ -1,7 +1,11 @@
+/* global fetch */
+
 import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
-import { View, StyleSheet, } from 'react-native';
-import { Spinner, Container, Header, Content, Item, Input } from 'native-base'
+import { View, StyleSheet } from 'react-native';
+import {
+  Spinner, Container, Header, Content, Item, Input,
+} from 'native-base';
 
 export class Top extends Component {
   static navigationOptions = {
@@ -13,25 +17,25 @@ export class Top extends Component {
     this.state = {
       text: '',
       questions: [],
-      isShow: false
+      isShow: false,
     };
   }
 
   change = (text) => {
-    this.setState({text: text}, () => {
-      if (this.state.text.length >= 3){
-        this.setState({isShow: true});
-        const roomID =  this.state.text;
-        const apiUrl = "https://smat-api.herokuapp.com"
-        fetch(apiUrl + "/rooms/" + roomID + "/questions")
+    this.setState({ text }, () => {
+      if (this.state.text.length >= 3) {
+        this.setState({ isShow: true });
+        const roomID = this.state.text;
+        const apiUrl = 'https://smat-api.herokuapp.com';
+        fetch(`${apiUrl}/rooms/${roomID}/questions`)
           .then(response => response.json())
-          .then(json => {
-            this.setState({questions: json}, () => {
+          .then((json) => {
+            this.setState({ questions: json }, () => {
               this.props.navigation.navigate('BigList', {
-                questions: this.state.questions
+                questions: this.state.questions,
               });
-            })
-          })
+            });
+          });
       }
     });
   }
@@ -42,11 +46,13 @@ export class Top extends Component {
                                          value={this.state.text}
                                          keyboardType="numeric"
     /></Item>;
-    if (this.state.isShow){
-      preloader = <Spinner color='blue'/>
+    if (this.state.isShow) {
+      preloader = <Spinner color='blue'/>;
     }
     return (
-      <View style= {{justifyContent: 'center', alignItems: 'center', paddingTop: 80, paddingHorizontal: 60}}>
+      <View style= {{
+        justifyContent: 'center', alignItems: 'center', paddingTop: 80, paddingHorizontal: 60,
+      }}>
         {preloader}
       </View>
     );

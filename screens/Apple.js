@@ -12,11 +12,11 @@ import {
   Button,
   Toast,
   Item,
-  Input, Spinner
+  Input, Spinner,
 } from 'native-base';
 import MathJax from 'react-native-mathjax';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import {View} from "react-native";
+import { View } from 'react-native';
 
 export class Apple extends Component {
   static navigationOptions = {
@@ -33,48 +33,50 @@ export class Apple extends Component {
     };
   }
 
-  parse = (text) => {
-    let result = text.replace(/\*/g, "\\times");
-    result = result.replace(/\//g, "\\div");
-    result = result.replace(/\+-/g, "\\pm");
-    result = result.replace(/-\+/g, "\\mp");
+  parse(text) {
+    let result = text.replace(/\*/g, '\\times');
+    result = result.replace(/\//g, '\\div');
+    result = result.replace(/\+-/g, '\\pm');
+    result = result.replace(/-\+/g, '\\mp');
+
+    // parse sqrt
     const ss = result.match(/#{.+?}/g);
-    if (ss != null){
-      for (let s of ss){
-        let k = s.match(/[^#]+/g);
-        result = result.replace(s, "\\sqrt{" + k[0].slice(1, -1) + "}");
-      }
+    if (ss != null) {
+      ss.forEach((elem) => {
+        result = result.replace(elem, `\\sqrt{${elem.match(/[^#]+/g)[0].slice(1, -1)}}`);
+      });
     }
+
+    // parse frac
     const fs = result.match(/\[.+?]%\[.+?]/g);
-    if (fs != null){
-      for (let f of fs){
-        console.log(f);
-        let k = f.match(/[^%]+/g);
-        result = result.replace(f, "\\frac{" + k[0].slice(1, -1) + "}{" + k[1].slice(1, -1) + "}");
-      }
+    if (fs != null) {
+      fs.forEach((elem) => {
+        const k = elem.match(/[^%]+/g);
+        result = result.replace(elem, `\\frac{${k[0].slice(1, -1)}}{${k[1].slice(1, -1)}}`);
+      });
     }
-    result = result.replace(/@|#|\$|%|&/, "");
+    result = result.replace(/@|#|\$|%|&/, '');
     console.log(result);
     return result;
   }
 
   ansify = (text) => {
-    let result = text.replace(/[0-9a-w]+/g, "\\boxed{\\phantom{0}}");
+    const result = text.replace(/[0-9a-w]+/g, '\\boxed{\\phantom{0}}');
     return result;
   }
 
   getSelection = (text) => {
     const answers = text.match(/[0-9a-w]+/g);
     const selections = [];
-    for (let a of answers) {
-      let selection = [a];
+    answers.forEach((a) => {
+      const selection = [a];
       for (let i = 0; i < 3; i++) {
-        let ans = "";
-        const c = "abcdefghijklmnopqrstuvw";
-        for (let i = 0; i < a.length; i++) {
-          if (isNaN(parseInt(a[i]))) {
+        let ans = '';
+        const c = 'abcdefghijklmnopqrstuvw';
+        for (let j = 0; j < a.length; j++) {
+          if (Number.isNaN(parseFloat(a[j]))) {
             // str const
-            ans += c[Math.floor(Math.random() * c.length)]
+            ans += c[Math.floor(Math.random() * c.length)];
           } else {
             // int const
             ans += Math.floor(Math.random() * 10);
@@ -83,7 +85,7 @@ export class Apple extends Component {
         selection.push(ans);
       }
       selections.push(selection);
-    }
+    });
     return selections;
   };
 
@@ -93,17 +95,19 @@ export class Apple extends Component {
   }
 
   makeFontBigger = (text) => {
-    let result = "\\Large{" + text + "}";
+    const result = `\\Large{${text}}`;
     return result;
   }
 
   inCo = (answer, choice) => {
     if (this.state.isInCo === true && answer === choice) {
-      this.setState({backColor: 'green', isShow: true, answerNumber:  this.state.answerNumber + 1});
-    }else if (this.state.isInCo === true && answer !== choice){
-      this.setState({backColor: 'red', isShow: true, isInCo: false, answerNumber:  this.state.answerNumber + 1});
-    }else{
-      this.setState({answerNumber:  this.state.answerNumber + 1});
+      this.setState({ backColor: 'green', isShow: true, answerNumber: this.state.answerNumber + 1 });
+    } else if (this.state.isInCo === true && answer !== choice) {
+      this.setState({
+        backColor: 'red', isShow: true, isInCo: false, answerNumber: this.state.answerNumber + 1,
+      });
+    } else {
+      this.setState({ answerNumber: this.state.answerNumber + 1 });
     }
   }
 
@@ -113,19 +117,19 @@ export class Apple extends Component {
     const question = questions[questionId];
     const item = (
       <MathJax
-        html={'$'+ this.makeFontBigger(this.parse(question.text)) + '$'}
+        html={`$${this.makeFontBigger(this.parse(question.text))}$`}
         mathJaxOptions={{
           messageStyle: 'none',
-          extensions: [ 'tex2jax.js' ],
-          jax: [ 'input/TeX', 'output/HTML-CSS' ],
+          extensions: ['tex2jax.js'],
+          jax: ['input/TeX', 'output/HTML-CSS'],
           tex2jax: {
-            inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-            displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
             processEscapes: true,
           },
           TeX: {
-            extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js']
-          }
+            extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js'],
+          },
         }}
       />
     );
@@ -139,52 +143,50 @@ export class Apple extends Component {
     if (this.state.answerNumber < (dictOfAnswer.length)) {
       dictOfAnswerForUse = dictOfAnswer[this.state.answerNumber];
       dictOfChoiceForUse = dictOfChoice[this.state.answerNumber];
-    }else if (this.state.answerNumber === (dictOfAnswer.length)) {
-      {this.props.navigation.push('Details', {questions: questions, questionId:questionId})};
-      dictOfAnswerForUse = "";
-      dictOfChoiceForUse = "";
+    } else if (this.state.answerNumber === (dictOfAnswer.length)) {
+      dictOfAnswerForUse = '';
+      dictOfChoiceForUse = '';
     }
 
 
     const answer = (
       <MathJax
-        html={'$' + this.makeFontBigger(this.parse(this.ansify(question.answer))) + '$'}
+        html={`$${this.makeFontBigger(this.parse(this.ansify(question.answer)))}$`}
         mathJaxOptions={{
           messageStyle: 'none',
-          extensions: [ 'tex2jax.js' ],
-          jax: [ 'input/TeX', 'output/HTML-CSS' ],
+          extensions: ['tex2jax.js'],
+          jax: ['input/TeX', 'output/HTML-CSS'],
           tex2jax: {
-            inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-            displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
             processEscapes: true,
           },
           TeX: {
-            extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js']
-          }
+            extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js'],
+          },
         }}
       />
     );
 
     return (
       <Container>
-        <Content style={{backgroundColor: this.state.backColor}}>
+        <Content style={{ backgroundColor: this.state.backColor }}>
           <Text>問題</Text>
-          <Card style={{paddingLeft: 30, paddingTop: 30, paddingBottom: 30}}>
+          <Card style={{ paddingLeft: 30, paddingTop: 30, paddingBottom: 30 }}>
             {item}
           </Card>
           <Text>解答</Text>
-          <Card style={{paddingLeft: 30, paddingTop: 30, paddingBottom: 30}}>
+          <Card style={{ paddingLeft: 30, paddingTop: 30, paddingBottom: 30 }}>
             {answer}
           </Card>
-          <Grid style={{paddingTop: 100, height: 100}}>
-            <Col style={{paddingLeft: 30}}><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2])}}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3])}}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+          <Grid style={{ paddingTop: 100, height: 100 }}>
+            <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0]); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1]); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2]); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3]); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
           </Grid>
         </Content>
       </Container>
     );
   }
 }
-

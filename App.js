@@ -12,7 +12,7 @@ const RootStack = createStackNavigator(
   },
   {
     initialRouteName: 'Home',
-  }
+  },
 );
 
 export default class App extends Component {
