@@ -4,6 +4,10 @@ import { View, StyleSheet, } from 'react-native';
 import { Spinner, Container, Header, Content, Item, Input } from 'native-base'
 
 export class Top extends Component {
+  static navigationOptions = {
+    title: '入室せよ',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,9 +38,9 @@ export class Top extends Component {
 
   render() {
     let preloader = <Item rounded><Input autoFocus placeholder='部屋番号を入力してください。'
-                               onChangeText={this.change}
-                               value={this.state.text}
-                               keyboardType="numeric"
+                                         onChangeText={this.change}
+                                         value={this.state.text}
+                                         keyboardType="numeric"
     /></Item>;
     if (this.state.isShow){
       preloader = <Spinner color='blue'/>
@@ -48,10 +52,3 @@ export class Top extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 0
-  },
-});
