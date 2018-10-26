@@ -81,7 +81,6 @@ export class Apple extends Component {
           }
         }
         selection.push(ans);
-
       }
       selections.push(selection);
     }
@@ -115,7 +114,6 @@ export class Apple extends Component {
     const item = (
       <MathJax
         html={'$'+ this.makeFontBigger(this.parse(question.text)) + '$'}
-
         mathJaxOptions={{
           messageStyle: 'none',
           extensions: [ 'tex2jax.js' ],
@@ -131,7 +129,6 @@ export class Apple extends Component {
         }}
       />
     );
-
 
     const dictOfAnswer = this.getAnswer(question.answer);
     const dictOfChoice = this.getSelection(question.answer);
