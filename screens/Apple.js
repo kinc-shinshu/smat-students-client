@@ -80,10 +80,12 @@ export class Apple extends Component {
             ans += Math.floor(Math.random() * 10);
           }
         }
+        selection.sort();
         selection.push(ans);
       }
       selections.push(selection);
     }
+    console.log(selections);
     return selections;
   };
 
@@ -139,8 +141,8 @@ export class Apple extends Component {
     if (this.state.answerNumber < (dictOfAnswer.length)) {
       dictOfAnswerForUse = dictOfAnswer[this.state.answerNumber];
       dictOfChoiceForUse = dictOfChoice[this.state.answerNumber];
-    }else if (this.state.answerNumber === (dictOfAnswer.length)) {
-      {this.props.navigation.push('Details', {questions: questions, questionId:questionId})};
+    } else if (this.state.answerNumber === (dictOfAnswer.length)) {
+      this.props.navigation.push('Details', { questions, questionId: questionId + 1 });
       dictOfAnswerForUse = "";
       dictOfChoiceForUse = "";
     }
@@ -177,7 +179,7 @@ export class Apple extends Component {
             {answer}
           </Card>
           <Grid style={{paddingTop: 100, height: 100}}>
-            <Col style={{paddingLeft: 30}}><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col style={{paddingLeft: 30}}><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0])}}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
             <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
             <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2])}}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
             <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3])}}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
