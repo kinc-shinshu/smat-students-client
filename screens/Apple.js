@@ -40,20 +40,22 @@ export class Apple extends Component {
     result = result.replace(/\//g, '\\div');
     result = result.replace(/\+-/g, '\\pm');
     result = result.replace(/-\+/g, '\\mp');
+
+    // parse sqrt
     const ss = result.match(/#{.+?}/g);
     if (ss != null) {
-      for (const s of ss) {
-        const k = s.match(/[^#]+/g);
-        result = result.replace(s, `\\sqrt{${k[0].slice(1, -1)}}`);
-      }
+      ss.forEach((elem) => {
+        result = result.replace(elem, `\\sqrt{${elem.match(/[^#]+/g)[0].slice(1, -1)}}`);
+      });
     }
+
+    // parse frac
     const fs = result.match(/\[.+?]%\[.+?]/g);
     if (fs != null) {
-      for (const f of fs) {
-        console.log(f);
-        const k = f.match(/[^%]+/g);
-        result = result.replace(f, `\\frac{${k[0].slice(1, -1)}}{${k[1].slice(1, -1)}}`);
-      }
+      fs.forEach((elem) => {
+        const k = elem.match(/[^%]+/g);
+        result = result.replace(elem, `\\frac{${k[0].slice(1, -1)}}{${k[1].slice(1, -1)}}`);
+      });
     }
     result = result.replace(/@|#|\$|%|&/, '');
     console.log(result);
@@ -68,13 +70,13 @@ export class Apple extends Component {
   getSelection = (text) => {
     const answers = text.match(/[0-9a-w]+/g);
     const selections = [];
-    for (const a of answers) {
+    answers.forEach((a) => {
       const selection = [a];
       for (let i = 0; i < 3; i++) {
         let ans = '';
         const c = 'abcdefghijklmnopqrstuvw';
-        for (let i = 0; i < a.length; i++) {
-          if (isNaN(parseInt(a[i]))) {
+        for (let j = 0; j < a.length; j++) {
+          if (Number.isNaN(parseFloat(a[j]))) {
             // str const
             ans += c[Math.floor(Math.random() * c.length)];
           } else {
@@ -86,8 +88,7 @@ export class Apple extends Component {
         selection.push(ans);
       }
       selections.push(selection);
-    }
-    console.log(selections);
+    });
     return selections;
   };
 
@@ -182,11 +183,11 @@ export class Apple extends Component {
           <Card style={{ paddingLeft: 30, paddingTop: 30, paddingBottom: 30 }}>
             {answer}
           </Card>
-          <Grid style={{paddingTop: 100, height: 100}}>
-            <Col style={{paddingLeft: 30}}><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0])}}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1])}}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2])}}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => {this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3])}}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+          <Grid style={{ paddingTop: 100, height: 100 }}>
+            <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0]); }}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1]); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2]); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3]); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
           </Grid>
         </Content>
       </Container>

@@ -1,3 +1,5 @@
+/* global fetch */
+
 import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
 import { View, StyleSheet } from 'react-native';
@@ -6,7 +8,6 @@ import {
 } from 'native-base';
 
 export class Top extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
