@@ -6,9 +6,10 @@ import {
   Icon,
   Text,
   Button,
+  Grid,
+  Col
 } from 'native-base';
 import MathJax from 'react-native-mathjax';
-import { Col, Grid } from 'react-native-easy-grid';
 import HeaderButtons, { HeaderButton, Item } from 'react-navigation-header-buttons';
 
 export class Apple extends Component {
@@ -108,7 +109,7 @@ export class Apple extends Component {
   }
 
   inCo = (answer, choice, ansNum) => {
-    this.setState({answerNumber: ansNum});
+    this.setState({ answerNumber: ansNum });
     if (this.state.isInCo === true && answer === choice && this.state.answerNumber !== this.state.inputNumber) {
       this.setState({ backColor: 'green', isShow: true, inputNumber: this.state.inputNumber + 1 });
     } else if (this.state.isInCo === true && answer === choice && this.state.answerNumber === this.state.inputNumber) {
@@ -177,7 +178,12 @@ export class Apple extends Component {
 
     const dictOfAnswer = this.getAnswer(question.answer);
     const dictOfChoice = this.getSelection(question.answer);
+
     let finishButton = (
+      <Text></Text>
+    );
+
+    let buttonForBug = (
       <Text></Text>
     );
 
@@ -188,7 +194,15 @@ export class Apple extends Component {
     if (this.state.inputNumber < (dictOfAnswer.length)) {
       dictOfAnswerForUse = dictOfAnswer[this.state.inputNumber];
       dictOfChoiceForUse = dictOfChoice[this.state.inputNumber];
-    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length === questions.length ) {
+      buttonForBug = (
+        <Grid style={{ paddingTop: 100, height: 100 }}>
+          <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0], ansNum); }} ><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1], ansNum); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2], ansNum); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3], ansNum); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+        </Grid>
+      )
+    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length === questions.length) {
       dictOfAnswerForUse = '';
       dictOfChoiceForUse = '';
       finishButton = (
@@ -196,12 +210,32 @@ export class Apple extends Component {
         <Text>結果提出</Text>
         </Button>
       );
-    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length !== questions.length ) {
+      buttonForBug = (
+        <Grid style={{ paddingTop: 100, height: 100 }}>
+          <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0], ansNum); }} ><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1], ansNum); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2], ansNum); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3], ansNum); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+        </Grid>
+      )
+    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length !== questions.length && questionId < questions.length - 1) {
       this.props.navigation.push('Details', {
         questions, questionId: questionId + 1, qId: this.state.qId, j: this.state.j,
       });
-      dictOfAnswerForUse = '';
-      dictOfChoiceForUse = '';
+      buttonForBug = (
+        <Grid style={{ paddingTop: 100, height: 100 }}>
+          <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0], ansNum); }} ><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1], ansNum); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2], ansNum); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+          <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3], ansNum); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+        </Grid>
+      )
+    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length !== questions.length && questionId === questions.length - 1) {
+      buttonForBug = (
+        <Button full info style={{ paddingTop: 100, height: 100 }}>
+          <Text>他の問題を答えてください</Text>
+        </Button>
+      );
     }
 
 
@@ -235,12 +269,7 @@ export class Apple extends Component {
           <Card style={{ paddingLeft: 30, paddingTop: 30, paddingBottom: 30 }}>
             {answer}
           </Card>
-          <Grid style={{ paddingTop: 100, height: 100 }}>
-            <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0], ansNum); }}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1], ansNum); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2], ansNum); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3], ansNum); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
-          </Grid>
+          {buttonForBug}
           {finishButton}
         </Content>
       </Container>
