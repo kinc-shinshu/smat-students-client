@@ -17,8 +17,11 @@ export class Apple extends Component {
     this.state = {
       isShow: false,
       backColor: 'white',
-      answerNumber: 0,
+      inputNumber: 0,
+      answerNumber: -1,
       isInCo: true,
+      qId: this.props.navigation.state.params.qId,
+      j: this.props.navigation.state.params.j,
     };
   }
 
@@ -29,7 +32,10 @@ export class Apple extends Component {
           <HeaderButton {...passMeFurther} iconSize={23} color="#000"/>
         )}>
           <Item title="問題一覧" onPress={() => {
-            navigation.navigate('BigList');
+            navigation.navigate('BigList', {
+              qId: navigation.state.params.qId,
+              j: navigation.state.params.j,
+            });
           }}/>
         </HeaderButtons>
     ),
@@ -58,7 +64,6 @@ export class Apple extends Component {
       });
     }
     result = result.replace(/@|#|\$|%|&/, '');
-    console.log(result);
     return result;
   }
 
@@ -102,15 +107,48 @@ export class Apple extends Component {
     return result;
   }
 
-  inCo = (answer, choice) => {
-    if (this.state.isInCo === true && answer === choice) {
-      this.setState({ backColor: 'green', isShow: true, answerNumber: this.state.answerNumber + 1 });
+  inCo = (answer, choice, ansNum) => {
+    this.setState({answerNumber: ansNum});
+    if (this.state.isInCo === true && answer === choice && this.state.answerNumber !== this.state.inputNumber) {
+      this.setState({ backColor: 'green', isShow: true, inputNumber: this.state.inputNumber + 1 });
+    } else if (this.state.isInCo === true && answer === choice && this.state.answerNumber === this.state.inputNumber) {
+      if (typeof (this.state.qId) === 'undefined' || typeof (this.state.j) === 'undefined') {
+        const nowqId = [];
+        const nowj = [];
+        const newqId = nowqId.concat(this.props.navigation.state.params.questionId);
+        const newj = nowj.concat(1);
+        this.setState({
+          backColor: 'green', isShow: true, inputNumber: this.state.inputNumber + 1, qId: newqId, j: newj,
+        });
+      } else {
+        const nowqId = this.state.qId;
+        const nowj = this.state.j;
+        const newqId = nowqId.concat(this.props.navigation.state.params.questionId);
+        const newj = nowj.concat(1);
+        this.setState({
+          backColor: 'green', isShow: true, inputNumber: this.state.inputNumber + 1, qId: newqId, j: newj,
+        });
+      }
     } else if (this.state.isInCo === true && answer !== choice) {
-      this.setState({
-        backColor: 'red', isShow: true, isInCo: false, answerNumber: this.state.answerNumber + 1,
-      });
+      if (typeof (this.state.qId) === 'undefined' || typeof (this.state.j) === 'undefined') {
+        const nowqId = [];
+        const nowj = [];
+        const newqId = nowqId.concat(this.props.navigation.state.params.questionId);
+        const newj = nowj.concat(0);
+        this.setState({
+          backColor: 'red', isShow: true, isInCo: false, inputNumber: this.state.inputNumber + 1, qId: newqId, j: newj,
+        });
+      } else {
+        const nowqId = this.state.qId;
+        const nowj = this.state.j;
+        const newqId = nowqId.concat(this.props.navigation.state.params.questionId);
+        const newj = nowj.concat(0);
+        this.setState({
+          backColor: 'red', isShow: true, isInCo: false, inputNumber: this.state.inputNumber + 1, qId: newqId, j: newj,
+        });
+      }
     } else {
-      this.setState({ answerNumber: this.state.answerNumber + 1 });
+      this.setState({ inputNumber: this.state.inputNumber + 1 });
     }
   }
 
@@ -139,15 +177,29 @@ export class Apple extends Component {
 
     const dictOfAnswer = this.getAnswer(question.answer);
     const dictOfChoice = this.getSelection(question.answer);
+    let finishButton = (
+      <Text></Text>
+    );
 
     let dictOfAnswerForUse = dictOfAnswer;
     let dictOfChoiceForUse = dictOfChoice;
+    const ansNum = dictOfAnswer.length;
 
-    if (this.state.answerNumber < (dictOfAnswer.length)) {
-      dictOfAnswerForUse = dictOfAnswer[this.state.answerNumber];
-      dictOfChoiceForUse = dictOfChoice[this.state.answerNumber];
-    } else if (this.state.answerNumber === (dictOfAnswer.length)) {
-      this.props.navigation.push('Details', { questions, questionId: questionId + 1 });
+    if (this.state.inputNumber < (dictOfAnswer.length)) {
+      dictOfAnswerForUse = dictOfAnswer[this.state.inputNumber];
+      dictOfChoiceForUse = dictOfChoice[this.state.inputNumber];
+    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length === questions.length ) {
+      dictOfAnswerForUse = '';
+      dictOfChoiceForUse = '';
+      finishButton = (
+        <Button full info style={{ height: 100 }}>
+        <Text>結果提出</Text>
+        </Button>
+      );
+    } else if (this.state.inputNumber === dictOfAnswer.length && this.state.qId.length !== questions.length ) {
+      this.props.navigation.push('Details', {
+        questions, questionId: questionId + 1, qId: this.state.qId, j: this.state.j,
+      });
       dictOfAnswerForUse = '';
       dictOfChoiceForUse = '';
     }
@@ -184,11 +236,12 @@ export class Apple extends Component {
             {answer}
           </Card>
           <Grid style={{ paddingTop: 100, height: 100 }}>
-            <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0]); }}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1]); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2]); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
-            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3]); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
+            <Col style={{ paddingLeft: 30 }}><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[0], ansNum); }}><Text>{dictOfChoiceForUse[0]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[1], ansNum); }}><Text>{dictOfChoiceForUse[1]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[2], ansNum); }}><Text>{dictOfChoiceForUse[2]}</Text></Button></Col>
+            <Col ><Button large info onPress={() => { this.inCo(dictOfAnswerForUse, dictOfChoiceForUse[3], ansNum); }}><Text>{dictOfChoiceForUse[3]}</Text></Button></Col>
           </Grid>
+          {finishButton}
         </Content>
       </Container>
     );
